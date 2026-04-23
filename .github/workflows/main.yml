@@ -1,0 +1,40 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: |
+        npm install
+
+    - name: Lint contracts with solhint
+      run: |
+        npx solhint '**/*.sol'
+
+    - name: Run Hardhat tests
+      run: |
+        npx hardhat test
+
+    - name: Upload coverage report
+      uses: coverallsapp/github-action@v1.0.2
+      with:
+        path-to-lcov: ./coverage/lcov.info
+
